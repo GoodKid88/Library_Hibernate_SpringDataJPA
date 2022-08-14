@@ -1,14 +1,12 @@
 package example.org.models;
 
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.util.Date;
 import java.util.List;
+
 
 @Entity
 @Table(name = "Person")
@@ -23,38 +21,20 @@ public class Person {
     @Column(name = "name")
     private String name;
 
-    @Min(value = 0, message = "Age should be greater than 0")
-    @Column(name = "age")
-    private int age;
-
-    @Column(name = "email")
-    @NotEmpty(message = "Email should not be empty")
-    @Email
-    private String email;
+    @Min(value = 1920, message = "Year should not be greater than 1920")
+    @Column(name = "year_of_birth")
+    private int yearOfBirth;
 
     @OneToMany(mappedBy ="owner")
-    private List<Item> items;
-
-    @Column(name = "date_of_birth")
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date dateOfBirth;
-
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @Enumerated(EnumType.STRING)
-    private Mood mood;
-
+    private List<Book> books;
 
     public Person() {
 
     }
 
-    public Person(String name, int age) {
+    public Person(String name, int yearOfBirth) {
         this.name = name;
-        this.age = age;
+        this.yearOfBirth = yearOfBirth;
     }
 
     public int getId() {
@@ -73,53 +53,20 @@ public class Person {
         this.name = name;
     }
 
-    public int getAge() {
-        return age;
+    public int getYearOfBirth() {
+        return yearOfBirth;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setYearOfBirth(int yearOfBirth) {
+        this.yearOfBirth = yearOfBirth;
     }
 
-    public String getEmail() {
-        return email;
+    public List<Book> getBooks() {
+        return books;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<Item> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Item> items) {
-        this.items = items;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-
-    public Mood getMood() {
-        return mood;
-    }
-
-    public void setMood(Mood mood) {
-        this.mood = mood;
+    public void setBooks(List<Book> books) {
+        this.books = books;
     }
 
     @Override
@@ -127,27 +74,7 @@ public class Person {
         return "Person{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", age=" + age +
+                ", yearOfBirth=" + yearOfBirth +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Person person = (Person) o;
-
-        if (id != person.id) return false;
-        if (age != person.age) return false;
-        return name != null ? name.equals(person.name) : person.name == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + age;
-        return result;
     }
 }

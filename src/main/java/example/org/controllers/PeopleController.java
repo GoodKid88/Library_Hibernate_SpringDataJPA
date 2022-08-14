@@ -1,10 +1,9 @@
 package example.org.controllers;
 
-import example.org.dao.PersonDao;
+import example.org.dao.PersonDAO;
 import example.org.models.Person;
-import example.org.services.ItemService;
+import example.org.services.BookService;
 import example.org.services.PeopleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,27 +16,19 @@ import javax.validation.Valid;
 public class PeopleController {
 
     private final PeopleService peopleService;
-    private final ItemService itemService;
+    private final BookService bookService;
+    private final PersonDAO personDAO;
 
-    private final PersonDao personDao;
-
-
-    @Autowired
-    public PeopleController(PeopleService peopleService, ItemService itemService, PersonDao personDao) {
+    public PeopleController(PeopleService peopleService, BookService bookService, PersonDAO personDAO) {
         this.peopleService = peopleService;
-        this.itemService = itemService;
-        this.personDao = personDao;
+        this.bookService = bookService;
+        this.personDAO = personDAO;
     }
+
 
     @GetMapping()
     public String index(Model model) {
-        //   model.addAttribute("people", peopleService.findAll());
-
-        // itemService.findByItemName("Airpods");
-        //   itemService.findByOwner(peopleService.findAll().get(0));
-        personDao.testNPlus();
-        //  peopleService.test();
-
+           model.addAttribute("people", peopleService.findAll());
         return "people/index";
     }
 
