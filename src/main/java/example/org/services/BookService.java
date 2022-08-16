@@ -3,11 +3,14 @@ package example.org.services;
 import example.org.models.Book;
 import example.org.models.Person;
 import example.org.repositories.BookRepository;
-import example.org.repositories.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +24,20 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public List<Book> findAll(boolean sortByYear) {
+        if (sortByYear) {
+            return bookRepository.findAll(Sort.by("year"));
+        } else {
+            return bookRepository.findAll();
+        }
+    }
+
+    public List<Book> findWithPagination(Integer page, Integer booksPerPage, boolean sortByYear) {
+        if (sortByYear) {
+            return bookRepository.findAll(PageRequest.of(page, booksPerPage, Sort.by("year"))).getContent();
+        } else {
+            return bookRepository.findAll(PageRequest.of(page, booksPerPage)).getContent();
+        }
     }
 
     public Book findOne(int id) {
@@ -30,9 +45,8 @@ public class BookService {
         return foundBook.orElse(null);
     }
 
-    @Transactional
-    public List<Book> findByOwner(Person owner) {
-        return bookRepository.findByOwner(owner);
+    public List<Book> searchByTitle(String query) {
+        return bookRepository.findByTitleStartingWith(query);
     }
 
     @Transactional
@@ -42,7 +56,10 @@ public class BookService {
 
     @Transactional
     public void update(int id, Book updatedBook) {
+        Book bookToBeUpdated = bookRepository.findById(id).get();
+
         updatedBook.setId(id);
+        updatedBook.setOwner(bookToBeUpdated.getOwner());
         bookRepository.save(updatedBook);
     }
 
@@ -51,14 +68,27 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
+    public Person getBookOwner(int id) {
+        return bookRepository.findById(id).map(Book::getOwner).orElse(null);
+    }
+
     @Transactional
     public void release(int id) {
-        Optional<Book> book = bookRepository.findById(id).get().setOwner();
+        bookRepository.findById(id).ifPresent(
+                book -> {
+                    book.setOwner(null);
+                    book.setTakenAt(null);
+                }
+        );
     }
 
+    @Transactional
     public void assign(int id, Person selectedPerson) {
-        bookRepository.findById(id).get().setOwner(selectedPerson);
+        bookRepository.findById(id).ifPresent(
+                book -> {
+                    book.setOwner(selectedPerson);
+                    book.setTakenAt(new Date());
+                }
+        );
     }
-
-
 }

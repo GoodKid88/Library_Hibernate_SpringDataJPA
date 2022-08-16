@@ -20,26 +20,30 @@ public class BookController {
     private final PeopleService peopleService;
     private final BookService bookService;
 
-    private final BookDAO bookDAO;
-
 
     @Autowired
-    public BookController(PeopleService peopleService, BookService bookService, BookDAO bookDAO) {
+    public BookController(PeopleService peopleService, BookService bookService) {
         this.peopleService = peopleService;
         this.bookService = bookService;
-        this.bookDAO = bookDAO;
     }
 
     @GetMapping()
-    public String index(Model model) {
-        model.addAttribute("books", bookService.findAll());
+    public String index(Model model, @RequestParam(value = "page", required = false) Integer page,
+                        @RequestParam(value = "books_per_page", required = false) Integer booksPerPage,
+                        @RequestParam(value = "sort_by_year", required = false) boolean sortByYear) {
+
+        if (page == null || booksPerPage == null) {
+            model.addAttribute("books", bookService.findAll(sortByYear));
+        } else {
+            model.addAttribute("books", bookService.findWithPagination(page, booksPerPage, sortByYear));
+        }
         return "books/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
         model.addAttribute("book", bookService.findOne(id));
-        bookService.findByOwner(peopleService.findAll().get(id));
+        Optional<Person> bookOwner = Optional.ofNullable(bookService.findOne(id).getOwner());
 
         if (bookOwner.isPresent()) {
             model.addAttribute("owner", bookOwner.get());
@@ -96,6 +100,17 @@ public class BookController {
     public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person selectedPerson) {
         bookService.assign(id, selectedPerson);
         return "redirect:/books/" + id;
+    }
+
+    @GetMapping("/search")
+    public String searchPage(){
+        return "books/search";
+    }
+
+    @PostMapping("search")
+    public String makeSearch(Model model, @RequestParam("query") String query){
+        model.addAttribute("books", bookService.searchByTitle(query));
+        return "books/search";
     }
 }
 

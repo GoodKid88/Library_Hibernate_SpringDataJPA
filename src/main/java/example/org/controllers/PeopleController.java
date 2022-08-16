@@ -16,13 +16,11 @@ import javax.validation.Valid;
 public class PeopleController {
 
     private final PeopleService peopleService;
-    private final BookService bookService;
-    private final PersonDAO personDAO;
 
-    public PeopleController(PeopleService peopleService, BookService bookService, PersonDAO personDAO) {
+
+
+    public PeopleController(PeopleService peopleService) {
         this.peopleService = peopleService;
-        this.bookService = bookService;
-        this.personDAO = personDAO;
     }
 
 
@@ -35,6 +33,7 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
         model.addAttribute("person", peopleService.findOne(id));
+        model.addAttribute("books", peopleService.getBooksByPersonId(id));
         return "people/show";
     }
 
