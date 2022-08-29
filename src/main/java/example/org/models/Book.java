@@ -11,13 +11,12 @@ import java.util.Date;
 @Entity
 @Table(name = "Book")
 public class Book {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotEmpty(message = "Name should not be empty")
-    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
+    @NotEmpty(message = "Title should not be empty")
+    @Size(min = 2, max = 30, message = "Title should be between 2 and 30 characters")
     @Column(name = "title")
     private String title;
 
@@ -43,8 +42,6 @@ public class Book {
     public Book() {
 
     }
-
-    @Autowired
     public Book(String title, String author, int year) {
         this.title = title;
         this.author = author;
@@ -107,16 +104,5 @@ public class Book {
 
     public void setExpired(boolean expired) {
         this.expired = expired;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", year=" + year +
-                ", owner=" + owner +
-                '}';
     }
 }

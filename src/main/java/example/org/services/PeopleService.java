@@ -1,6 +1,6 @@
 package example.org.services;
 
-import example.org.models.Book;
+import  example.org.models.Book;
 import example.org.models.Person;
 import example.org.repositories.PeopleRepository;
 import org.hibernate.Hibernate;
@@ -50,8 +50,8 @@ public class PeopleService {
         peopleRepository.deleteById(id);
     }
 
-    public Optional<Person> getPersonByName(String name) {
-        return peopleRepository.findByName(name);
+    public Optional<Person> getPersonByFullName(String fullName) {
+        return peopleRepository.findByFullName(fullName);
     }
 
     public List<Book> getBooksByPersonId(int id) {
@@ -59,6 +59,7 @@ public class PeopleService {
 
         if (person.isPresent()) {
             Hibernate.initialize(person.get().getBooks());
+
             person.get().getBooks().forEach(book -> {
                 long differentInMlSec = Math.abs(book.getTakenAt().getTime() - new Date().getTime());
                 //10 days = 864000000
@@ -70,7 +71,5 @@ public class PeopleService {
         } else {
             return Collections.emptyList();
         }
-
     }
-
 }

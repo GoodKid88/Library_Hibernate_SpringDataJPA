@@ -12,20 +12,22 @@
     <input type="submit" value="Search"/>
 </form>
 <div th:if="${books}">
-    <span>Books not found</span>
-</div>
-
-<div th:each="book : ${books}">
-    <p th:text="${book.getTitle() + ', ' + book.getAuthor()+', ' + book.getYear()}">Book</p>
-
-    <div th:if="${book.getOwner() != null}">
-        <span>Person name</span><span th:text="${book.getOwner().getName()}"> has book now</span>
+    <div th:="${books.isEmpty()}">
+        <span>Books not found</span>
     </div>
 
-    <div th:if="${book.getOwner() == null}">
-        <span>The book is free</span>
+    <div th:each="book : ${books}">
+        <p th:text="${book.getTitle() + ', ' + book.getAuthor()+', ' + book.getYear()}">Book</p>
+
+        <div th:if="${book.getOwner() != null}">
+            <span>Person name</span><span th:text="${book.getOwner().getFullName()}"> has book now</span>
+        </div>
+
+        <div th:if="${book.getOwner() == null}">
+            <span>The book is free</span>
+        </div>
+        <hr>
     </div>
-    <hr>
 </div>
 
 </body>

@@ -1,8 +1,6 @@
 package example.org.controllers;
 
-import example.org.dao.PersonDAO;
 import example.org.models.Person;
-import example.org.services.BookService;
 import example.org.services.PeopleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -6,7 +6,7 @@
     <title>Show</title>
 </head>
 <body>
-<p th:text="${person.getName() + ', ' + person.getYearOfBirth()}">VALUE</p>
+<p th:text="${person.getFullName() + ', ' + person.getYearOfBirth()}">VALUE</p>
 
 <div th:if="${books.isEmpty()}">
     <p>The person has no book</p>
@@ -18,7 +18,8 @@
     <b>Books:</b>
     <table th:each="book:${books}">
         <tr>
-        <td><span th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}"
+        <td>
+            <span th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}"
                   th:style="${book.isExpired()} ? 'color: red' : 'color: black'">Book</span>
         </td>
         </tr>

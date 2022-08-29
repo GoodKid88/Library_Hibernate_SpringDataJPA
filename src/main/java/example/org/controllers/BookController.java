@@ -1,6 +1,5 @@
 package example.org.controllers;
 
-import example.org.dao.BookDAO;
 import example.org.models.Person;
 import example.org.models.Book;
 import example.org.services.BookService;
@@ -41,12 +40,13 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model) {
+    public String show(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
         model.addAttribute("book", bookService.findOne(id));
-        Optional<Person> bookOwner = Optional.ofNullable(bookService.findOne(id).getOwner());
 
-        if (bookOwner.isPresent()) {
-            model.addAttribute("owner", bookOwner.get());
+        Person bookOwner = bookService.getBookOwner(id);
+
+        if (bookOwner != null) {
+            model.addAttribute("owner", bookOwner);
         } else {
             model.addAttribute("people", peopleService.findAll());
         }
@@ -54,7 +54,7 @@ public class BookController {
     }
 
     @GetMapping("/new")
-    public String newPerson(@ModelAttribute("book") Book book) {
+    public String newBook(@ModelAttribute("book") Book book) {
         return "books/new";
     }
 
